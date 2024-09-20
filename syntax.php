@@ -465,18 +465,23 @@ class syntax_plugin_dwmenu extends DokuWiki_Syntax_Plugin {
    * @return array
    */
   private function _parseOptions($string){
-      $arrOptions = array();
-      $string = trim($string);
 
-      $arrString = explode('" ', $string.' ');
-      foreach($arrString as $item){
-          $arrItem = explode('="', $item);
-          if(!empty($arrItem[0])){
-              $arrOptions[$arrItem[0]] = $arrItem[1];
-          }
-          unset($arrItem);
-      }
-      return $arrOptions;
+    $string = trim($string);
+    $matches = [];
+    $nb_matches = preg_match_all(
+      '|(?<option>[a-z]+)="(?<value>[^"]*)"|',
+      $string, 
+      $matches,
+      PREG_PATTERN_ORDER,
+    );
+
+    $arrOptions = [];
+    for ($i = 0 ; $i < $nb_matches ; $i++){
+      $option = $matches['option'][$i];
+      $value = $matches['value'][$i];
+      $arrOptions[$option] = $value;
+    }
+    return $arrOptions;
   }
 }
 
